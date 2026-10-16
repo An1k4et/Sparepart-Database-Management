@@ -171,12 +171,13 @@ const Sidebar: React.FC<SidebarProps> = ({ searchMatchingVesselIds, selectedFile
   };
 
   return (
-    <div className="w-80 bg-slate-900 text-white h-full flex flex-col border-r border-slate-800 flex-shrink-0">
+    <div id="tour-sidebar" className="w-80 bg-slate-900 text-white h-full flex flex-col border-r border-slate-800 flex-shrink-0">
       <div className="p-4 border-b border-slate-800 flex justify-between items-center">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <FiFolder /> Clients
         </h2>
         <button 
+          id="tour-add-client"
           onClick={() => setIsAddClientModalOpen(true)}
           className="p-1 hover:bg-slate-700 rounded text-slate-300 hover:text-white transition-colors cursor-pointer"
           title="Add Client"

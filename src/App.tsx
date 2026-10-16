@@ -5,11 +5,17 @@ import SearchBar from './components/SearchBar';
 import LoginPage from './components/LoginPage';
 import { FileRecord, ExcelData, SearchResult } from './types';
 import { search, getFileData, getFiles } from './api';
-import { FiDatabase, FiLogOut } from 'react-icons/fi';
+import { FiDatabase, FiLogOut, FiHelpCircle } from 'react-icons/fi';
+import OnboardingTour from './components/OnboardingTour';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
     return localStorage.getItem('spdm_is_logged_in') === 'true';
+  });
+
+  const [isTourOpen, setIsTourOpen] = useState<boolean>(() => {
+    // Only open automatically if this system/browser has never completed the tour
+    return localStorage.getItem('spdm_has_seen_tour') !== 'true';
   });
 
   const [selectedFile, setSelectedFile] = useState<FileRecord | null>(null);
@@ -95,14 +101,25 @@ const App: React.FC = () => {
             currentQuery={searchQuery}
           />
         </div>
-        <button
-          onClick={handleLogout}
-          className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-red-950/70 hover:border-red-700/60 border border-slate-700 rounded-lg transition-colors cursor-pointer"
-          title="Sign out of SPDM"
-        >
-          <FiLogOut size={14} />
-          <span>Logout</span>
-        </button>
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            id="tour-guide-btn"
+            onClick={() => setIsTourOpen(prev => !prev)}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-colors cursor-pointer"
+            title="Interactive Website Walkthrough"
+          >
+            <FiHelpCircle size={14} className="text-blue-400" />
+            <span>Guide</span>
+          </button>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-red-950/70 hover:border-red-700/60 border border-slate-700 rounded-lg transition-colors cursor-pointer"
+            title="Sign out of SPDM"
+          >
+            <FiLogOut size={14} />
+            <span>Logout</span>
+          </button>
+        </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
@@ -121,22 +138,29 @@ const App: React.FC = () => {
           }}
         />
         
-        {selectedFile ? (
-          <ExcelViewer 
-            file={selectedFile}
-            data={excelData}
-            onClose={() => { setSelectedFile(null); setSearchQuery(''); }}
-            searchQuery={searchQuery}
-            onClearSearch={() => handleSearch('')}
-          />
-        ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-gray-500 bg-white">
-            <div className="text-6xl mb-4">📄</div>
-            <h2 className="text-xl font-medium text-gray-700">No file selected</h2>
-            <p>Select an Excel file from the sidebar or search to view data.</p>
-          </div>
-        )}
+        <div id="tour-viewer" className="flex-1 flex overflow-hidden relative">
+          {selectedFile ? (
+            <ExcelViewer 
+              file={selectedFile}
+              data={excelData}
+              onClose={() => { setSelectedFile(null); setSearchQuery(''); }}
+              searchQuery={searchQuery}
+              onClearSearch={() => handleSearch('')}
+            />
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center text-gray-500 bg-white">
+              <div className="text-6xl mb-4">📄</div>
+              <h2 className="text-xl font-medium text-gray-700">No file selected</h2>
+              <p>Select an Excel file from the sidebar or search to view data.</p>
+            </div>
+          )}
+        </div>
       </div>
+
+      <OnboardingTour 
+        isOpen={isTourOpen} 
+        onClose={() => setIsTourOpen(false)} 
+      />
     </div>
   );
 };

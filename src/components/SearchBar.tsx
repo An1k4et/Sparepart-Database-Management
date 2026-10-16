@@ -59,7 +59,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, results, onSelectVessel
   const totalMatchingRows = results.reduce((sum, r) => sum + (r.match_count || 1), 0);
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-2xl mx-auto flex items-center">
+    <div id="tour-search-bar" ref={containerRef} className="relative w-full max-w-2xl mx-auto flex items-center">
       <form onSubmit={handleSubmit} className="relative flex items-center flex-1 w-full">
         <div className="relative flex items-center flex-1">
           <FiSearch className="absolute left-3 text-gray-400" size={18} />
